@@ -15,7 +15,7 @@
             bool atHome = true;
             bool driving = false;
             bool atWork = false;
-            bool dressed = false;
+            bool showered = false;
             bool ateBreakfast = false;
             bool wentToLunch = false;
             tiredness = StartTiredLevel();
@@ -24,8 +24,11 @@
             Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
             Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
             Console.WriteLine("You need to head out the door by 7:40am to make it to work on time at 8:00am.");
+            Console.WriteLine(" ");
+            Console.WriteLine("Here are the facts:");
             Console.WriteLine(ParseTiredness(tiredness));
-            Console.WriteLine(ParseAnxiety(anxiety);
+            Console.WriteLine(ParseAnxiety(anxiety));
+            Console.WriteLine(ParseFocus(focus));
 
             
             
@@ -180,7 +183,7 @@
             }
             else if (level <= 49)
             {
-                return "Your thinking feels slowed, but capable of deliberation.";
+                return "Your thinking feels slowed, but you're capable of deliberation.";
             }
             else if (level <= 59)
             {
@@ -188,25 +191,26 @@
             }
             else if (level <= 69)
             {
-                return "Your eyes water from time to time.";
+                return "You feel fully capable of any task you might need to accomplish.";
             }
             else if (level <= 79)
             {
-                return "You catch yourself closing your eyes involuntarily at inopportune moments.";
+                return "Your attention to detail is very minute and accurate.";
             }
             else if (level <= 89)
             {
-                return "Your head seems to be magnetically attracted to whatever is in front of you.";
+                return "You're reaching a flow state. Even the most mundane task gives you pleasure.";
             }
             else if (level <= 99)
             {
-                return "The line separating the real world and dream land is beginning to blur.";
+                return "You're handling information in the world as if you were breathing it.";
             }
             else
             {
-                return "You've passed out!";
+                return "You have perfect focus!";
             }
-            static public void PassTenMinutes(int time, int tiredness, int focus, int anxiety, int caffeine)
+        }
+        static public void PassTenMinutes(int time, int tiredness, int focus, int anxiety, int caffeine)
         {
             time = time++;
             if (time % 6 == 0)
@@ -242,6 +246,15 @@
             return tiredness + directTiredness;
         }
 
+        static public int DirectlyChangeFocus(int directFocus, int focus)
+        {
+            return focus + directFocus;
+        }
+
+        static public int DirectAddCaffeine(int caffeine, int dose)
+        {
+            return caffeine + dose;
+        }
 
     }
 }
