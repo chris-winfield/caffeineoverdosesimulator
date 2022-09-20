@@ -113,6 +113,7 @@ class Program
         if (hour >= 13)
         {
             hour = hour - 12;
+            ampm = "pm";
         }
         return hour + ":" + minute + "0" + ampm;
 
@@ -232,9 +233,9 @@ class Program
 
         }
     }
-    static int CalculateNewAnxiety(int caffeine, int tiredness, int anxiety)
+    static int CalculateNewAnxiety(int newCaffeineDose, int tiredness, int anxiety)
     {
-        int addedAnxiety = (caffeine / 50) - (tiredness / 100);
+        int addedAnxiety = (newCaffeineDose / 50) - (tiredness / 100);
         return anxiety + addedAnxiety;
     }
 
