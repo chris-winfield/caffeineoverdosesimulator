@@ -212,7 +212,7 @@ class Program
             return "You have perfect focus!";
         }
     }
-    static void PassTenMinutes(int time, int tiredness, int focus, int anxiety, int caffeine)
+    static void PassTenMinutes(ref int time, ref int tiredness, ref int focus, ref int anxiety, ref int caffeine)
     {
         time = time++;
         if (time % 6 == 0)
@@ -233,33 +233,33 @@ class Program
 
         }
     }
-    static int CalculateNewAnxiety(int newCaffeineDose, int tiredness, int anxiety)
+    static void CalculateNewAnxiety(int newCaffeineDose, ref int tiredness, ref int anxiety)
     {
         int addedAnxiety = (newCaffeineDose / 50) - (tiredness / 100);
-        return anxiety + addedAnxiety;
+        anxiety = anxiety + addedAnxiety;
     }
 
-    static int DirectlyChangeAnxiety(int directAnxiety, int anxiety)
+    static void DirectlyChangeAnxiety(int directAnxiety, ref int anxiety)
     {
-        return anxiety + directAnxiety;
+        anxiety = anxiety + directAnxiety;
     }
 
-    static int DirectlyChangeTiredness(int directTiredness, int tiredness)
+    static void DirectlyChangeTiredness(int directTiredness, ref int tiredness)
     {
-        return tiredness + directTiredness;
+        tiredness = tiredness + directTiredness;
     }
 
-    static int DirectlyChangeFocus(int directFocus, int focus)
+    static void DirectlyChangeFocus(int directFocus, ref int focus)
     {
-        return focus + directFocus;
+        focus = focus + directFocus;
     }
 
-    static int DirectAddCaffeine(int caffeine, int dose)
+    static void DirectAddCaffeine(int dose, ref int caffeine)
     {
-        return caffeine + dose;
+        caffeine = caffeine + dose;
     }
 
-    
+  
 
 
 
