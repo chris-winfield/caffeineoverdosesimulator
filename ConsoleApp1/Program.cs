@@ -37,12 +37,15 @@ class Program
 
     }
 
+    //Allows all stats to be passed together
+
     static int[] MakeStatsIntoArray(int time, int tiredness, int anxiety, int focus, int caffeine)
     {
         int[] statsArray = { time, tiredness, anxiety, focus, caffeine };
         return statsArray;
     }
 
+    //Random variables to start for these three stats
     static int StartTiredLevel()
     {
         Random rnd = new();
@@ -60,6 +63,8 @@ class Program
         return rnd.Next(29, 48);
     }
 
+    //Stats output messages:
+    
     static string ParseTiredness(int tiredness)
     {
         if (tiredness <= 9)
@@ -251,49 +256,32 @@ class Program
         statsArray[2] = statsArray[2] + directAnxiety;
     }
 
-    static void DirectlyChangeTiredness(int directTiredness, ref int[] statsArray //Tiredness index 1
+    static void DirectlyChangeTiredness(int directTiredness, ref int[] statsArray) //Tiredness index 1
     {
         statsArray[1] = statsArray[1] + directTiredness;
     }
 
-    static void DirectlyChangeFocus(int directFocus, ref int focus) //
+    static void DirectlyChangeFocus(int directFocus, ref int[] statsArray) // Focus index 3
     {
-        focus = focus + directFocus;
+        statsArray[3] = statsArray[3] + directFocus;
     }
 
-    static void DirectAddCaffeine(int dose, ref int caffeine)
+    static void DirectlyAddCaffeine(int dose, ref int[] statsArray) // Caffeine index 4
     {
-        caffeine = caffeine + dose;
+        statsArray[4] = statsArray[4] + dose;
     }
 
-    static void WaitForFirstAlarm(ref int time, ref int tiredness)
+    static void WaitForFirstAlarm(ref int[] statsArray)
     {
-        
-    }
+        Random rnd = new();
+        int tirednessChange = rnd.Next(0, 5);
+        DirectlyChangeTiredness(tirednessChange, ref statsArray);
+        PassTenMinutes(ref statsArray);
 
-    public class Action
-    {
-        public Action(int actionID, string actionTitle, string actionText, int timeChange, int tirednessChange, int anxietyChange, int caffeineChange)
-        {
-            ActionID = actionID;
-            ActionTitle = actionTitle;
-            ActionText = actionText;
-            TimeChange = timeChange;
-            TirednessChange = tirednessChange;
-            AnxietyChange = anxietyChange;
-            CaffeineChange = caffeineChange;
-
-        }
-        public int ActionID { get; private set; }
-        public string ActionTitle { get; private set; }
-        public string ActionText { get; private set; }
-        public int TimeChange { get; private set; }
-        public int TirednessChange { get; private set; }
-        public int AnxietyChange { get; private set; }
-        public int CaffeineChange { get; private set; }
 
     }
 
+    
     
 
 
