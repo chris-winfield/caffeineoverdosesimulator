@@ -219,44 +219,44 @@ class Program
             return "You have perfect focus!";
         }
     }
-    static void PassTenMinutes(ref int time, ref int tiredness, ref int focus, ref int anxiety, ref int caffeine)
+    static void PassTenMinutes(ref int[] statsArray) // passes 0.time 1.tiredness 2.anxiety 3.focus 4.caffeine
     {
-        time = time++;
-        if (time % 6 == 0)
+        statsArray[0] = statsArray[0]++; //Increments time
+        if (statsArray[0] % 6 == 0)
         {
-            tiredness = tiredness + 3;
+            statsArray[1] = statsArray[1] + 3;
             Random rnd = new();
-            int focusCoinFlip = rnd.Next(1, 2);
+            int focusCoinFlip = rnd.Next(1, 2); //A 50-50 chance to gain or lose focus on a new hour.
             if (focusCoinFlip % 2 == 0)
             {
-                focus = focus + 10;
+                statsArray[3] = statsArray[3] + 10;
             }
             else
             {
-                focus = focus - 10;
+                statsArray[3] = statsArray[3] - 10;
             }
-            anxiety = (int)(anxiety * Math.Pow(0.5, 0.17));
-            caffeine = (int)(caffeine * Math.Pow(0.5, 0.042));
+            statsArray[2] = (int)(statsArray[2] * Math.Pow(0.5, 0.17)); // Anxiety half-life of 1 hour decay
+            statsArray[4] = (int)(statsArray[4] * Math.Pow(0.5, 0.042)); // Caffeine half life of 5 hour decay
 
         }
     }
-    static void CalculateNewAnxiety(int newCaffeineDose, ref int tiredness, ref int anxiety)
+    static void CalculateNewAnxiety(int newCaffeineDose, ref int[] statsArray) //Anxiety index 2, Tiredness Index 1
     {
-        int addedAnxiety = (newCaffeineDose / 50) - (tiredness / 100);
-        anxiety = anxiety + addedAnxiety;
+        int addedAnxiety = (newCaffeineDose / 50) - (statsArray[1] / 10);
+        statsArray[2] = statsArray[2] + addedAnxiety;
     }
 
-    static void DirectlyChangeAnxiety(int directAnxiety, ref int anxiety)
+    static void DirectlyChangeAnxiety(int directAnxiety, ref int[] statsArray) // Anxiety index 2
     {
-        anxiety = anxiety + directAnxiety;
+        statsArray[2] = statsArray[2] + directAnxiety;
     }
 
-    static void DirectlyChangeTiredness(int directTiredness, ref int tiredness)
+    static void DirectlyChangeTiredness(int directTiredness, ref int[] statsArray //Tiredness index 1
     {
-        tiredness = tiredness + directTiredness;
+        statsArray[1] = statsArray[1] + directTiredness;
     }
 
-    static void DirectlyChangeFocus(int directFocus, ref int focus)
+    static void DirectlyChangeFocus(int directFocus, ref int focus) //
     {
         focus = focus + directFocus;
     }
