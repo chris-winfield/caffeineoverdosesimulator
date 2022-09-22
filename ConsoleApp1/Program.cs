@@ -24,6 +24,7 @@ class Program
         tiredness = StartTiredLevel();
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
+        int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
         Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
@@ -34,6 +35,12 @@ class Program
         Console.WriteLine(ParseAnxiety(anxiety));
         Console.WriteLine(ParseFocus(focus));
 
+    }
+
+    static int[] MakeStatsIntoArray(int time, int tiredness, int anxiety, int focus, int caffeine)
+    {
+        int[] statsArray = { time, tiredness, anxiety, focus, caffeine };
+        return statsArray;
     }
 
     static int StartTiredLevel()
@@ -257,6 +264,11 @@ class Program
     static void DirectAddCaffeine(int dose, ref int caffeine)
     {
         caffeine = caffeine + dose;
+    }
+
+    static void WaitForFirstAlarm(ref int time, ref int tiredness)
+    {
+        
     }
 
     public class Action
