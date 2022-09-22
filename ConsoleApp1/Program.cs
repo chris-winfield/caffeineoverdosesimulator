@@ -259,7 +259,31 @@ class Program
         caffeine = caffeine + dose;
     }
 
-  
+    public class Action
+    {
+        public Action(int actionID, string actionTitle, string actionText, int timeChange, int tirednessChange, int anxietyChange, int caffeineChange)
+        {
+            ActionID = actionID;
+            ActionTitle = actionTitle;
+            ActionText = actionText;
+            TimeChange = timeChange;
+            TirednessChange = tirednessChange;
+            AnxietyChange = anxietyChange;
+            CaffeineChange = caffeineChange;
+
+        }
+        public int ActionID { get; private set; }
+        public string ActionTitle { get; private set; }
+        public string ActionText { get; private set; }
+        public int TimeChange { get; private set; }
+        public int TirednessChange { get; private set; }
+        public int AnxietyChange { get; private set; }
+        public int CaffeineChange { get; private set; }
+
+    }
+
+    
+
 
 
 
