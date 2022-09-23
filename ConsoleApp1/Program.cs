@@ -16,15 +16,17 @@ class Program
         int focus;
         int caffeine = 0;
         bool atHome = true;
-        bool driving = false;
-        bool atWork = false;
+        bool hitSnooze = false;
         bool showered = false;
         bool ateBreakfast = false;
+        bool driving = false;
+        bool atWork = false;
         bool wentToLunch = false;
         tiredness = StartTiredLevel();
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
         int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
+        bool[] boolArray = MakeBoolsIntoArray(atHome, hitSnooze, showered, ateBreakfast);
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
         Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
@@ -37,12 +39,18 @@ class Program
 
     }
 
-    //Allows all stats to be passed together
+    //Allows all stats and bools to be passed together
 
     static int[] MakeStatsIntoArray(int time, int tiredness, int anxiety, int focus, int caffeine)
     {
         int[] statsArray = { time, tiredness, anxiety, focus, caffeine };
         return statsArray;
+    }
+
+    static bool[] MakeBoolsIntoArray(bool atHome, bool hitSnooze, bool showered, bool ateBreakfast)
+    {
+        bool[] boolArray = { atHome, hitSnooze, showered, ateBreakfast };
+        return boolArray;
     }
 
     //Random variables to start for these three stats
@@ -224,6 +232,13 @@ class Program
             return "You have perfect focus!";
         }
     }
+
+    static void BuildOptionsList(ref int[] statsArray, ref bool[] boolsArray)
+    {
+
+    }
+
+    //Stat Modication Methods:
     static void PassTenMinutes(ref int[] statsArray) // passes 0.time 1.tiredness 2.anxiety 3.focus 4.caffeine
     {
         statsArray[0] = statsArray[0]++; //Increments time
@@ -271,18 +286,65 @@ class Program
         statsArray[4] = statsArray[4] + dose;
     }
 
-    static void WaitForFirstAlarm(ref int[] statsArray)
+    //Player Actions:
+
+    static void WaitForAlarm(ref int[] statsArray)
     {
         Random rnd = new();
-        int tirednessChange = rnd.Next(0, 5);
+        int tirednessChange = rnd.Next(-5, 0);
         DirectlyChangeTiredness(tirednessChange, ref statsArray);
         PassTenMinutes(ref statsArray);
-
-
     }
 
-    
-    
+    static void HitTheSnooze (ref int[] statsArray)
+    {
+        Random rnd = new();
+        int tirednessChange = rnd.Next(-5, 0);
+        DirectlyChangeTiredness(tirednessChange, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void TakeShower (ref int[] statsArray)
+    {
+        Random rnd = new();
+        int anxietyChange = rnd.Next(-10, -5);
+        DirectlyChangeAnxiety(anxietyChange, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void BreakfastWater (ref int[] statsArray)
+    {
+        DirectlyChangeFocus(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void BreakfastTea (ref int[] statsArray)
+    {
+        DirectlyAddCaffeine(50, ref statsArray);
+        DirectlyChangeFocus(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+    static void BreakfastCoffee(ref int[] statsArray)
+    {
+        DirectlyAddCaffeine(100, ref statsArray);
+        DirectlyChangeFocus(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+    static void BreakfastEnergyDrink(ref int[] statsArray)
+    {
+        DirectlyAddCaffeine(200, ref statsArray);
+        DirectlyChangeFocus(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+    static void BreakfastTablet(ref int[] statsArray)
+    {
+        DirectlyAddCaffeine(400, ref statsArray);
+        DirectlyChangeFocus(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+
+
 
 
 
