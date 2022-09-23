@@ -40,6 +40,7 @@ class Program
         Console.WriteLine(statsArray);
         BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
         ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray);
+        
 
     }
 
@@ -91,33 +92,51 @@ class Program
                 optionsBuilder[optionCounter, 1] = 4;
                 options.Add((string)optionsBuilder[optionCounter, 0]);
                 optionCounter++;
+
                 optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have black tea with breakfast. ";
                 optionsBuilder[optionCounter, 1] = 5;
                 options.Add((string)optionsBuilder[optionCounter, 0]);
                 optionCounter++;
-                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have energy drink with breakfast. ";
+
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have coffee with breakfast. ";
                 optionsBuilder[optionCounter, 1] = 6;
                 options.Add((string)optionsBuilder[optionCounter, 0]);
                 optionCounter++;
-                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have caffeine tablet with breakfast. ";
+
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have energy drink with breakfast. ";
                 optionsBuilder[optionCounter, 1] = 7;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have caffeine tablet with breakfast. ";
+                optionsBuilder[optionCounter, 1] = 8;
                 options.Add((string)optionsBuilder[optionCounter, 0]);
                 optionCounter++;
             }
             optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drive to work. ";
-            optionsBuilder[optionCounter, 1] = 8;
+            optionsBuilder[optionCounter, 1] = 9;
             options.Add((string)optionsBuilder[optionCounter, 0]);
             optionCounter++;
         }
 
-        optionsOut = optionsBuilder; 
+        optionsOut = optionsBuilder;
 
-        Console.WriteLine($"The time is {ParseTime(statsArray[0])}. Your options are {options}What do you want to do?");
+        Console.WriteLine($"The time is {ParseTime(statsArray[0])}. Your options are:");
+        options.ForEach(Console.WriteLine);
+        Console.WriteLine("What do you want to do?");
         Failure:
         string userChoice = Console.ReadLine();
         if (Int32.TryParse(userChoice, out int choice))
         {
-            choiceOut = choice;
+            if (optionsOut[choice - 1, 0] != null)
+            {
+                choiceOut = choice;
+            }
+            else
+            {
+                Console.WriteLine("Please enter one of the options.");
+                goto Failure;
+            }
         }
         else
         {
