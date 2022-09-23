@@ -1,5 +1,4 @@
 ﻿using System;
-using Actions;
 
 namespace CaffeineOverdoseSimulator;
 
@@ -16,17 +15,18 @@ class Program
         int focus;
         int caffeine = 0;
         bool atHome = true;
-        bool hitSnooze = false;
+        bool waitedForAlarm = false;
         bool showered = false;
         bool ateBreakfast = false;
         bool driving = false;
         bool atWork = false;
         bool wentToLunch = false;
+        object[,] optionsOut;
         tiredness = StartTiredLevel();
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
         int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
-        bool[] boolArray = MakeBoolsIntoArray(atHome, hitSnooze, showered, ateBreakfast);
+        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, showered, ateBreakfast);
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
         Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
@@ -36,10 +36,11 @@ class Program
         Console.WriteLine(ParseTiredness(tiredness));
         Console.WriteLine(ParseAnxiety(anxiety));
         Console.WriteLine(ParseFocus(focus));
+        BuildOptionsList(ref statsArray, ref boolArray, out optionsOut);
 
     }
 
-    //Allows all stats and bools to be passed together
+    //Allows all stats and all bools to be passed respectively as single refs:
 
     static int[] MakeStatsIntoArray(int time, int tiredness, int anxiety, int focus, int caffeine)
     {
@@ -47,10 +48,116 @@ class Program
         return statsArray;
     }
 
-    static bool[] MakeBoolsIntoArray(bool atHome, bool hitSnooze, bool showered, bool ateBreakfast)
+    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool showered, bool ateBreakfast)
     {
-        bool[] boolArray = { atHome, hitSnooze, showered, ateBreakfast };
+        bool[] boolArray = { atHome, waitedForAlarm, showered, ateBreakfast };
         return boolArray;
+    }
+
+    static void BuildOptionsList(ref int[] statsArray, ref bool[] boolsArray, out object[,] optionsOut, out int choiceOut)
+    {
+        object[,] optionsBuilder = new object[10, 10];
+        int optionCounter = 0;
+        List<string> options = new();
+        if (boolsArray[0] == true)
+        {
+            if (statsArray[0] == 0)
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Sleep until your first alarm goes off";
+                optionsBuilder[optionCounter, 1] = 1;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+            if (boolsArray[1] == true)
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Hit the snooze button";
+                optionsBuilder[optionCounter, 1] = 2;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+            if (boolsArray[2] == false)
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take a shower";
+                optionsBuilder[optionCounter, 1] = 3;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+            if (boolsArray[3] == false)
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have breakfast without caffeine. ";
+                optionsBuilder[optionCounter, 1] = 4;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have black tea with breakfast. ";
+                optionsBuilder[optionCounter, 1] = 5;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have energy drink with breakfast. ";
+                optionsBuilder[optionCounter, 1] = 6;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Have caffeine tablet with breakfast. ";
+                optionsBuilder[optionCounter, 1] = 7;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drive to work. ";
+            optionsBuilder[optionCounter, 1] = 8;
+            options.Add((string)optionsBuilder[optionCounter, 0]);
+            optionCounter++;
+        }
+
+        optionsOut = optionsBuilder; 
+
+        Console.WriteLine($"The time is {ParseTime(statsArray[0])}. Your options are {options}What do you want to do?");
+        string userChoice = Console.ReadLine();
+        if (Int32.TryParse(userChoice, out int choice))
+        {
+            choiceOut = choice;
+        }
+        else
+        {
+            Console.WriteLine("Please enter a numerical choice.");
+        }
+            
+
+
+
+        
+    }
+
+    //Parse the choices:
+    void ParseChoice(int choiceInt, ref object[,] optionsOut, ref int[] statsArray, ref bool[] boolsArray)
+    {
+        int choiceIndex = choiceInt - 1;
+        int optionChoice = (int)optionsOut[choiceIndex, 1];
+        switch (optionChoice)
+        {
+            case 1:
+                WaitForAlarm(ref statsArray);
+                break;
+            case 2:
+                HitTheSnooze(ref statsArray);
+                break;
+            case 3:
+                TakeShower(ref statsArray);
+                break;
+            case 4:
+                BreakfastWater(ref statsArray);
+                break;
+            case 5:
+                BreakfastTea(ref statsArray);
+                break;
+            case 6:
+                BreakfastCoffee(ref statsArray);
+                break;
+            case 7:
+                BreakfastEnergyDrink(ref statsArray);
+                break;
+            case 8:
+                BreakfastTablet(ref statsArray);
+                break;
+        }
     }
 
     //Random variables to start for these three stats
@@ -233,11 +340,6 @@ class Program
         }
     }
 
-    static void BuildOptionsList(ref int[] statsArray, ref bool[] boolsArray)
-    {
-
-    }
-
     //Stat Modication Methods:
     static void PassTenMinutes(ref int[] statsArray) // passes 0.time 1.tiredness 2.anxiety 3.focus 4.caffeine
     {
@@ -290,6 +392,7 @@ class Program
 
     static void WaitForAlarm(ref int[] statsArray)
     {
+        Console.WriteLine("You let yourself drift back to sleep until your alarm wakes you up again. You consider hitting the snooze.");
         Random rnd = new();
         int tirednessChange = rnd.Next(-5, 0);
         DirectlyChangeTiredness(tirednessChange, ref statsArray);
@@ -298,14 +401,16 @@ class Program
 
     static void HitTheSnooze (ref int[] statsArray)
     {
+        Console.WriteLine("You hit the snooze button. Before you know it, your alarm is going off again even louder. You can't hit it again.");
         Random rnd = new();
-        int tirednessChange = rnd.Next(-5, 0);
+        int tirednessChange = rnd.Next(-2, 0);
         DirectlyChangeTiredness(tirednessChange, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
     static void TakeShower (ref int[] statsArray)
     {
+        Console.WriteLine("You take a refreshing shower. It relaxes you.");
         Random rnd = new();
         int anxietyChange = rnd.Next(-10, -5);
         DirectlyChangeAnxiety(anxietyChange, ref statsArray);
@@ -314,30 +419,35 @@ class Program
 
     static void BreakfastWater (ref int[] statsArray)
     {
+        Console.WriteLine("You decide to experiment with not taking caffeine this morning. Best of luck!");
         DirectlyChangeFocus(10, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
     static void BreakfastTea (ref int[] statsArray)
     {
+        Console.WriteLine("You steep some tea with breakfast. It tastes full-bodied, yet refreshing.");
         DirectlyAddCaffeine(50, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
     static void BreakfastCoffee(ref int[] statsArray)
     {
+        Console.WriteLine("You have a cup of coffee with breakfast. You really regret not being able to savor the incredible taste.");
         DirectlyAddCaffeine(100, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
     static void BreakfastEnergyDrink(ref int[] statsArray)
     {
+        Console.WriteLine("You drink the energy drink with breakfast. You weren't drinking it for taste.");
         DirectlyAddCaffeine(200, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
     static void BreakfastTablet(ref int[] statsArray)
     {
+        Console.WriteLine("You take a caffeine tablet after breakfast. There's something deeply unsatisfying about this method.");
         DirectlyAddCaffeine(400, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
         PassTenMinutes(ref statsArray);
