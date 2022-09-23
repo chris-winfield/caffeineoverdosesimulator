@@ -22,6 +22,7 @@ class Program
         bool atWork = false;
         bool wentToLunch = false;
         object[,] optionsOut;
+        int choiceOut = 0;
         tiredness = StartTiredLevel();
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
@@ -36,7 +37,9 @@ class Program
         Console.WriteLine(ParseTiredness(tiredness));
         Console.WriteLine(ParseAnxiety(anxiety));
         Console.WriteLine(ParseFocus(focus));
-        BuildOptionsList(ref statsArray, ref boolArray, out optionsOut);
+        Console.WriteLine(statsArray);
+        BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
+        ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray);
 
     }
 
@@ -110,6 +113,7 @@ class Program
         optionsOut = optionsBuilder; 
 
         Console.WriteLine($"The time is {ParseTime(statsArray[0])}. Your options are {options}What do you want to do?");
+        Failure:
         string userChoice = Console.ReadLine();
         if (Int32.TryParse(userChoice, out int choice))
         {
@@ -118,6 +122,7 @@ class Program
         else
         {
             Console.WriteLine("Please enter a numerical choice.");
+            goto Failure;
         }
             
 
@@ -127,7 +132,7 @@ class Program
     }
 
     //Parse the choices:
-    void ParseChoice(int choiceInt, ref object[,] optionsOut, ref int[] statsArray, ref bool[] boolsArray)
+    static void ParseChoice(int choiceInt, ref object[,] optionsOut, ref int[] statsArray, ref bool[] boolsArray)
     {
         int choiceIndex = choiceInt - 1;
         int optionChoice = (int)optionsOut[choiceIndex, 1];
