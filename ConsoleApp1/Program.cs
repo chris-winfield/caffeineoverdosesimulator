@@ -33,14 +33,31 @@ class Program
         Console.WriteLine("Your alarm goes off in ten minutes.");
         Console.WriteLine("You need to head out the door by 7:40am to make it to work on time at 8:00am.");
         Console.WriteLine(" ");
-        Console.WriteLine("Here are the facts:");
-        Console.WriteLine(ParseTiredness(tiredness));
-        Console.WriteLine(ParseAnxiety(anxiety));
-        Console.WriteLine(ParseFocus(focus));
-        Console.WriteLine(statsArray);
+        StateTheStats(statsArray);
+        PrintStatsArray(statsArray);
         BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
         ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray);
-        
+        PassTenMinutes(ref statsArray);
+        CalculateCaffeineEffects(500, ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        CalculateCaffeineEffects(500, ref statsArray); 
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+        PassTenMinutes(ref statsArray);
+        PrintStatsArray(statsArray);
+
 
     }
 
@@ -56,6 +73,12 @@ class Program
     {
         bool[] boolArray = { atHome, waitedForAlarm, showered, ateBreakfast };
         return boolArray;
+    }
+
+    //Debug method for arrays:
+    static void PrintStatsArray(int [] statsArray)
+    {
+        Console.WriteLine($"Time: {statsArray[0]} *** Tiredness: {statsArray[1]} *** Anxiety: {statsArray[2]} *** Focus: {statsArray[3]} *** Caffeine: {statsArray[4]}");
     }
 
     static void BuildOptionsList(ref int[] statsArray, ref bool[] boolsArray, out object[,] optionsOut, out int choiceOut)
@@ -134,7 +157,7 @@ class Program
             }
             else
             {
-                Console.WriteLine("Please enter one of the options.");
+                Console.WriteLine("Please enter one of the available options.");
                 goto Failure;
             }
         }
@@ -204,6 +227,11 @@ class Program
 
     //Stats output messages:
     
+    static void StateTheStats(int[] statsArray)
+    {
+        Console.WriteLine("Here are the facts");
+        Console.WriteLine($"{ParseTiredness(statsArray[1])} {ParseFocus(statsArray[3])} {ParseAnxiety(statsArray[2])}");
+    }
     static string ParseTiredness(int tiredness)
     {
         if (tiredness <= 9)
@@ -367,7 +395,9 @@ class Program
     //Stat Modication Methods:
     static void PassTenMinutes(ref int[] statsArray) // passes 0.time 1.tiredness 2.anxiety 3.focus 4.caffeine
     {
-        statsArray[0] = statsArray[0]++; //Increments time
+        statsArray[0]++; //Increments time
+        statsArray[2] = (int)(statsArray[2] * Math.Pow(0.5, 0.17)); // Anxiety half-life of 1 hour decay
+        statsArray[4] = (int)(statsArray[4] * Math.Pow(0.5, 0.042)); // Caffeine half life of 5 hour decay
         if (statsArray[0] % 6 == 0)
         {
             statsArray[1] = statsArray[1] + 3;
@@ -380,16 +410,18 @@ class Program
             else
             {
                 statsArray[3] = statsArray[3] - 10;
-            }
-            statsArray[2] = (int)(statsArray[2] * Math.Pow(0.5, 0.17)); // Anxiety half-life of 1 hour decay
-            statsArray[4] = (int)(statsArray[4] * Math.Pow(0.5, 0.042)); // Caffeine half life of 5 hour decay
-
+            }       
         }
     }
-    static void CalculateNewAnxiety(int newCaffeineDose, ref int[] statsArray) //Anxiety index 2, Tiredness Index 1
+     static void CalculateCaffeineEffects(int newCaffeineDose, ref int[] statsArray)
     {
-        int addedAnxiety = (newCaffeineDose / 50) - (statsArray[1] / 10);
+        int addedAnxiety = newCaffeineDose / 50;
         statsArray[2] = statsArray[2] + addedAnxiety;
+        int removedTiredness = newCaffeineDose / 50;
+        statsArray[1] = statsArray[1] - removedTiredness;
+        int addedFocus = newCaffeineDose / 40;
+        statsArray[3] = statsArray[3] + addedFocus;
+        DirectlyAddCaffeine(newCaffeineDose, ref statsArray);
     }
 
     static void DirectlyChangeAnxiety(int directAnxiety, ref int[] statsArray) // Anxiety index 2
@@ -451,29 +483,29 @@ class Program
     static void BreakfastTea (ref int[] statsArray)
     {
         Console.WriteLine("You steep some tea with breakfast. It tastes full-bodied, yet refreshing.");
-        DirectlyAddCaffeine(50, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
+        CalculateCaffeineEffects(50, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
     static void BreakfastCoffee(ref int[] statsArray)
     {
         Console.WriteLine("You have a cup of coffee with breakfast. You really regret not being able to savor the incredible taste.");
-        DirectlyAddCaffeine(100, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
+        CalculateCaffeineEffects(100, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
     static void BreakfastEnergyDrink(ref int[] statsArray)
     {
         Console.WriteLine("You drink the energy drink with breakfast. You weren't drinking it for taste.");
-        DirectlyAddCaffeine(200, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
+        CalculateCaffeineEffects(200, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
     static void BreakfastTablet(ref int[] statsArray)
     {
         Console.WriteLine("You take a caffeine tablet after breakfast. There's something deeply unsatisfying about this method.");
-        DirectlyAddCaffeine(400, ref statsArray);
         DirectlyChangeFocus(10, ref statsArray);
+        CalculateCaffeineEffects(400, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
