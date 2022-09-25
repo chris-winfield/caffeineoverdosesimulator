@@ -14,6 +14,7 @@ class Program
         int anxiety;
         int focus;
         int caffeine = 0;
+        int tasksComplete = 0;
         bool atHome = true;
         bool waitedForAlarm = false;
         bool hitSnooze = false;
@@ -28,7 +29,7 @@ class Program
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
         int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
-        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast);
+        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork);
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
         Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
@@ -40,7 +41,7 @@ class Program
         {
             BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
             Console.Clear();
-            ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray);
+            ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray, ref int tasksComplete);
             PrintStatsArray(statsArray); // For debug only
             Array.Clear(optionsOut);
         } while (time <= 60);
@@ -58,9 +59,9 @@ class Program
         return statsArray;
     }
 
-    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool hitSnooze, bool showered, bool ateBreakfast)
+    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool hitSnooze, bool showered, bool ateBreakfast, bool driving, bool atWork)
     {
-        bool[] boolArray = { atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast };
+        bool[] boolArray = { atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork };
         return boolArray;
     }
 
@@ -141,6 +142,24 @@ class Program
             optionCounter++;
         }
 
+        if (boolsArray[5] == true)
+        {
+            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drive straight to work. ";
+            optionsBuilder[optionCounter, 1] = 11;
+            options.Add((string)optionsBuilder[optionCounter, 0]);
+            optionCounter++;
+
+            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drink an energy drink while driving to work. ";
+            optionsBuilder[optionCounter, 1] = 12;
+            options.Add((string)optionsBuilder[optionCounter, 0]);
+            optionCounter++;
+
+            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Stop to get coffee on the way to work. ";
+            optionsBuilder[optionCounter, 1] = 13;
+            options.Add((string)optionsBuilder[optionCounter, 0]);
+            optionCounter++;
+        }
+
         optionsOut = optionsBuilder;
 
         Console.WriteLine($"The time is {ParseTime(statsArray[0])}. Your options are:");
@@ -173,7 +192,7 @@ class Program
     }
 
     //Parse the choices:
-    static void ParseChoice(int choiceInt, ref object[,] optionsOut, ref int[] statsArray, ref bool[] boolsArray)
+    static void ParseChoice(int choiceInt, ref object[,] optionsOut, ref int[] statsArray, ref bool[] boolsArray, ref int tasksComplete)
     {
         int choiceIndex = choiceInt - 1;
         int optionChoice = (int)optionsOut[choiceIndex, 1];
@@ -206,6 +225,20 @@ class Program
             case 9:
                 BreakfastTablet(ref statsArray, ref boolsArray);
                 break;
+            case 10:
+                LeaveForWork(ref statsArray, ref boolsArray);
+                break;
+            case 11:
+                DriveStraightToWork(ref statsArray, ref boolsArray)
+                break;
+            case 12:
+                DrinkEnergyDriving(ref statsArray, ref boolsArray)
+                break;
+            case 13:
+                StopToGetCoffee(ref statsArray, ref boolsArray)
+                break;
+            case 14:
+                WorkOnTasks(ref statsArray, ref boolsArray, ref tasksComplete)
         }
     }
 
@@ -231,7 +264,7 @@ class Program
     
     static void StateTheStats(int[] statsArray)
     {
-        Console.WriteLine("Here are the facts:");
+        Console.WriteLine("Here are your impressions of about your present state:");
         Console.WriteLine($"{ParseTiredness(statsArray[1])} {ParseFocus(statsArray[3])} {ParseAnxiety(statsArray[2])}");
     }
     static string ParseTiredness(int tiredness)
@@ -553,6 +586,7 @@ class Program
         boolsArray[5] = false;
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
+        ArriveAtWork(ref statsArray, ref boolsArray);
     }
 
     static void DrinkEnergyDriving(ref int[] statsArray, ref bool[] boolsArray)
@@ -562,6 +596,7 @@ class Program
         CalculateCaffeineEffects(200, ref statsArray);
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
+        ArriveAtWork(ref statsArray, ref boolsArray);
     }
 
     static void StopToGetCoffee(ref int[] statsArray, ref bool[] boolsArray)
@@ -572,10 +607,12 @@ class Program
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
+        ArriveAtWork(ref statsArray, ref boolsArray);
     }
 
     static void ArriveAtWork(ref int[] statsArray, ref bool[] boolsArray)
     {
+         boolsArray[6] = true;
         if (statsArray[0] < 6)
         {
             Console.WriteLine("You arrive at work early. This noticeably makes you feel better about work. Why can't you ever normally do this?");
@@ -593,8 +630,24 @@ class Program
         }
         else if (statsArray[0] == 8)
         {
-            Console.WriteLine("You arrive to work late, beyond the usual margin of error. ")
+            Console.WriteLine("You arrive to work late, beyond the usual margin of error. You can hear the psychic scribbling of a mental note of your poor start to yet another workday.");
+            DirectlyChangeAnxiety(5, ref statsArray);
         }
+        else
+        {
+            Console.WriteLine("You are so late that you probably should have called ahead with an excuse prepared. But since it usually takes this long for all your functions to work, you'll just have to live with the shame.");
+            DirectlyChangeAnxiety(10, ref statsArray);
+        }
+        Console.WriteLine("You have an email from your boss waiting for you. Everything's status quo. Work on your tasks until it's time to leave.");
+        Console.WriteLine("Of course, you have your own ideas about how you should best spend your time.")
+        Console.WriteLine("You like to work on tasks in twenty minute chunks. Of course, the number of tasks you complete will depend on your mental state...");
+        Console.WriteLine("Which has demands of its own.")
+       
+    }
+
+    static void WorkOnTasks(ref int[] statsArray, ref bool[] boolsArray, ref int tasksComplete)
+    {
+
     }
 
 
