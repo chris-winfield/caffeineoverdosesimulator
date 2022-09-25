@@ -189,22 +189,22 @@ class Program
                 HitTheSnooze(ref statsArray, ref boolsArray);
                 break;
             case 4:
-                TakeShower(ref statsArray);
+                TakeShower(ref statsArray, ref boolsArray);
                 break;
             case 5:
-                BreakfastWater(ref statsArray);
+                BreakfastWater(ref statsArray, ref boolsArray);
                 break;
             case 6:
-                BreakfastTea(ref statsArray);
+                BreakfastTea(ref statsArray, ref boolsArray);
                 break;
             case 7:
-                BreakfastCoffee(ref statsArray);
+                BreakfastCoffee(ref statsArray, ref boolsArray);
                 break;
             case 8:
-                BreakfastEnergyDrink(ref statsArray);
+                BreakfastEnergyDrink(ref statsArray, ref boolsArray);
                 break;
             case 9:
-                BreakfastTablet(ref statsArray);
+                BreakfastTablet(ref statsArray, ref boolsArray);
                 break;
         }
     }
@@ -464,7 +464,7 @@ class Program
         PassTenMinutes(ref statsArray);
     }
 
-    static void HitTheSnooze (ref int[] statsArray, ref bool[] boolArray)
+    static void HitTheSnooze (ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You hit the snooze button. Before you know it, your alarm is going off again even louder. You can't hit it again.");
         Random rnd = new();
@@ -474,52 +474,128 @@ class Program
         PassTenMinutes(ref statsArray);
     }
 
-    static void TakeShower (ref int[] statsArray)
+    static void TakeShower (ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You take a refreshing shower. It relaxes you.");
         Random rnd = new();
         int anxietyChange = rnd.Next(-10, -5);
         DirectlyChangeAnxiety(anxietyChange, ref statsArray);
+        boolsArray[3] = true;
         PassTenMinutes(ref statsArray);
     }
 
-    static void BreakfastWater (ref int[] statsArray)
+    static void BreakfastWater (ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You decide to experiment with not taking caffeine this morning. Best of luck!");
         DirectlyChangeFocus(10, ref statsArray);
+        boolsArray[4] = true;
         PassTenMinutes(ref statsArray);
     }
 
-    static void BreakfastTea (ref int[] statsArray)
+    static void BreakfastTea (ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You steep some tea with breakfast. It tastes full-bodied, yet refreshing.");
         DirectlyChangeFocus(10, ref statsArray);
         CalculateCaffeineEffects(50, ref statsArray);
+        boolsArray[4] = true;
         PassTenMinutes(ref statsArray);
     }
-    static void BreakfastCoffee(ref int[] statsArray)
+    static void BreakfastCoffee(ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You have a cup of coffee with breakfast. You really regret not being able to savor the incredible taste.");
         DirectlyChangeFocus(10, ref statsArray);
         CalculateCaffeineEffects(100, ref statsArray);
+        boolsArray[4] = true;
         PassTenMinutes(ref statsArray);
     }
-    static void BreakfastEnergyDrink(ref int[] statsArray)
+    static void BreakfastEnergyDrink(ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You drink the energy drink with breakfast. You weren't drinking it for taste.");
         DirectlyChangeFocus(10, ref statsArray);
         CalculateCaffeineEffects(200, ref statsArray);
+        boolsArray[4] = true;
         PassTenMinutes(ref statsArray);
     }
-    static void BreakfastTablet(ref int[] statsArray)
+    static void BreakfastTablet(ref int[] statsArray, ref bool[] boolsArray)
     {
         Console.WriteLine("You take a caffeine tablet after breakfast. There's something deeply unsatisfying about this method.");
         DirectlyChangeFocus(10, ref statsArray);
         CalculateCaffeineEffects(400, ref statsArray);
+        boolsArray[4] = true;
         PassTenMinutes(ref statsArray);
     }
 
+    static void LeaveForWork(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        string commuteEstimate;
+        boolsArray[0] = false;
+        boolsArray[5] = true;
+        if (statsArray[0] <= 3)
+        {
+            commuteEstimate = "You've generously given yourself enough time to stop for a coffee, if you so choose."
+        }    
+        else if (statsArray[0] == 4)
+        {
+            commuteEstimate = "You have just enough time to get yourself to work with no stops, but you are the pilot and this is your ship, so it's up to you."
+        } 
+        else
+        {
+            commuteEstimate = "You will definitely be late for work at this point. Thankfully, you've recently become immune to the displeased looks of your coworkers."
+        }
+            
+        Console.WriteLine($"You leave for work at {ParseTime(statsArray[0])}. {commuteEstimate});
+        Console.WriteLine("Your stash of of energy drinks, slightly chilled by the crisp morning air, could also be tapped without making your commute longer.");
+    }
 
+    static void DriveStraightToWork(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You drive straight to work. It's almost completely uneventful. The craziest thing you see on the road is a bunch of people doing the exact same thing: commuting.");
+        boolsArray[5] = false;
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void DrinkEnergyDriving(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("Somehow, driving with one hand on the wheel and an energy drink in the other feels like something you were born to do.");
+        boolsArray[5] = false;
+        CalculateCaffeineEffects(200, ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void StopToGetCoffee(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("Stopping to get coffee \"only\" adds ten minutes to your trip. You don't know that much about coffee, but you can tell this is the best you'll have all day.");
+        boolsArray[5] = false;
+        CalculateCaffeineEffects(100, ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void ArriveAtWork(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        if (statsArray[0] < 6)
+        {
+            Console.WriteLine("You arrive at work early. This noticeably makes you feel better about work. Why can't you ever normally do this?");
+            DirectlyChangeAnxiety(-10, ref statsArray);
+        }
+        else if (statsArray[0] == 6)
+        {
+            Console.WriteLine("You arrive to work right on time. Nobody can say anything to you, which is cool.");
+            DirectlyChangeAnxiety(-1, ref statsArray);
+        }
+        else if (statsArray[0] == 7)
+        {
+            Console.WriteLine("You arrive to work slightly late. Not so late that anyone might actually care, but you did find yourself rushing up those stairs.");
+            DirectlyChangeAnxiety(1, ref statsArray);
+        }
+        else if (statsArray[0] == 8)
+        {
+            Console.WriteLine("You arrive to work late, beyond the usual margin of error. ")
+        }
+    }
 
 
 
