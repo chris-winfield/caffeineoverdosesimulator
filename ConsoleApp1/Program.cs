@@ -41,7 +41,7 @@ class Program
         {
             BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
             Console.Clear();
-            ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray, ref int tasksComplete);
+            ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray, ref tasksComplete);
             PrintStatsArray(statsArray); // For debug only
             Array.Clear(optionsOut);
         } while (time <= 60);
@@ -81,13 +81,14 @@ class Program
         object[,] optionsBuilder = new object[10, 10];
         int optionCounter = 0; // Allows the options to be numbered and keyed in
         List<string> options = new();
+
+        optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Check in with yourself about how tired, anxious, and focused you feel.";
+        optionsBuilder[optionCounter, 1] = 1;
+        options.Add((string)optionsBuilder[optionCounter, 0]);
+        optionCounter++;
+
         if (boolsArray[0] == true)
         {
-            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Check in with yourself about how tired, anxious, and focused you feel.";
-            optionsBuilder[optionCounter, 1] = 1;
-            options.Add((string)optionsBuilder[optionCounter, 0]);
-            optionCounter++;
-
             if (statsArray[0] == 0)
             {
                 optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Sleep until your first alarm goes off";
@@ -160,12 +161,20 @@ class Program
             optionCounter++;
         }
 
+        if (boolsArray[6] == true)
+        {
+            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Work on job tasks. ";
+            optionsBuilder[optionCounter, 1] = 14;
+            options.Add((string)optionsBuilder[optionCounter, 0]);
+            optionCounter++;
+        }
+
         optionsOut = optionsBuilder;
 
         Console.WriteLine($"The time is {ParseTime(statsArray[0])}. Your options are:");
         options.ForEach(Console.WriteLine);
         Console.WriteLine("What do you want to do?");
-        Failure: //A label which serves as a goto point for bad input
+        GetInput: //A label which serves as a goto point for bad input
         string userChoice = Console.ReadLine();
         if (Int32.TryParse(userChoice, out int choice)) // First tries to see if the input is a number
         {
@@ -176,13 +185,13 @@ class Program
             else
             {
                 Console.WriteLine("Please enter one of the available options.");
-                goto Failure;
+                goto GetInput;
             }
         }
         else
         {
             Console.WriteLine("Please enter a numerical choice.");
-            goto Failure;
+            goto GetInput;
         }
             
 
@@ -229,16 +238,17 @@ class Program
                 LeaveForWork(ref statsArray, ref boolsArray);
                 break;
             case 11:
-                DriveStraightToWork(ref statsArray, ref boolsArray)
+                DriveStraightToWork(ref statsArray, ref boolsArray);
                 break;
             case 12:
-                DrinkEnergyDriving(ref statsArray, ref boolsArray)
+                DrinkEnergyDriving(ref statsArray, ref boolsArray);
                 break;
             case 13:
-                StopToGetCoffee(ref statsArray, ref boolsArray)
+                StopToGetCoffee(ref statsArray, ref boolsArray);
                 break;
             case 14:
-                WorkOnTasks(ref statsArray, ref boolsArray, ref tasksComplete)
+                WorkOnTasks(ref statsArray, ref boolsArray, ref tasksComplete);
+                break;
         }
     }
 
@@ -503,7 +513,7 @@ class Program
         Random rnd = new();
         int tirednessChange = rnd.Next(-2, 0);
         DirectlyChangeTiredness(tirednessChange, ref statsArray);
-        boolArray[2] = true;
+        boolsArray[2] = true;
         PassTenMinutes(ref statsArray);
     }
 
@@ -565,18 +575,18 @@ class Program
         boolsArray[5] = true;
         if (statsArray[0] <= 3)
         {
-            commuteEstimate = "You've generously given yourself enough time to stop for a coffee, if you so choose."
+            commuteEstimate = "You've generously given yourself enough time to stop for a coffee, if you so choose.";
         }    
         else if (statsArray[0] == 4)
         {
-            commuteEstimate = "You have just enough time to get yourself to work with no stops, but you are the pilot and this is your ship, so it's up to you."
+            commuteEstimate = "You have just enough time to get yourself to work with no stops, but you are the pilot and this is your ship, so it's up to you.";
         } 
         else
         {
-            commuteEstimate = "You will definitely be late for work at this point. Thankfully, you've recently become immune to the displeased looks of your coworkers."
+            commuteEstimate = "You will definitely be late for work at this point. Thankfully, you've recently become immune to the displeased looks of your coworkers.";
         }
             
-        Console.WriteLine($"You leave for work at {ParseTime(statsArray[0])}. {commuteEstimate});
+        Console.WriteLine($"You leave for work at {ParseTime(statsArray[0])}. {commuteEstimate}");
         Console.WriteLine("Your stash of of energy drinks, slightly chilled by the crisp morning air, could also be tapped without making your commute longer.");
     }
 
@@ -639,15 +649,49 @@ class Program
             DirectlyChangeAnxiety(10, ref statsArray);
         }
         Console.WriteLine("You have an email from your boss waiting for you. Everything's status quo. Work on your tasks until it's time to leave.");
-        Console.WriteLine("Of course, you have your own ideas about how you should best spend your time.")
+        Console.WriteLine("Of course, you have your own ideas about how you should best spend your time.");
         Console.WriteLine("You like to work on tasks in twenty minute chunks. Of course, the number of tasks you complete will depend on your mental state...");
-        Console.WriteLine("Which has demands of its own.")
+        Console.WriteLine("Which has demands of its own.");
        
     }
 
     static void WorkOnTasks(ref int[] statsArray, ref bool[] boolsArray, ref int tasksComplete)
     {
-
+        int focusFactor = statsArray[3];
+        int anxietyFactor = statsArray[2];
+        int tiredFactor = statsArray[1];
+        int successfulTasksThisChunk = 0;
+        int taskRoll;
+        int taskSuccessRate = focusFactor - (anxietyFactor / 5) - (tiredFactor / 10);
+        Random rnd = new();
+        for (int i = 0; i < 4; i++)
+        {
+            taskRoll = rnd.Next(0, 100);
+            if (taskSuccessRate >= taskRoll)
+            {
+                successfulTasksThisChunk++;
+            }
+        }
+        switch (successfulTasksThisChunk)
+        {
+            case 4:
+                Console.WriteLine("You did some of your best work on those tasks!");
+                break;
+            case 3:
+                Console.WriteLine("Those tasks went very well.");
+                break;
+            case 2:
+                Console.WriteLine("Nobody can say you aren't doing your job.");
+                break;
+            case 1:
+                Console.WriteLine("That wasn't your best work to be sure.");
+                break;
+            case 0:
+                Console.WriteLine("When you look back on your work, it's an incomprehensible mess!");
+                break;
+        }
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
     }
 
 
