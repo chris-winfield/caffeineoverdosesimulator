@@ -23,13 +23,15 @@ class Program
         bool driving = false;
         bool atWork = false;
         bool wentToLunch = false;
+        bool passedOut = false;
+        bool panicAttack = false;
         int choiceOut;
         object[,] optionsOut;
         tiredness = StartTiredLevel();
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
         int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
-        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork);
+        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch);
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
         Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
@@ -39,6 +41,7 @@ class Program
         PrintStatsArray(statsArray);
         do
         {
+            CheckForMaxValues(ref statsArray, ref boolArray);
             BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
             Console.Clear();
             ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray, ref tasksComplete);
@@ -59,9 +62,9 @@ class Program
         return statsArray;
     }
 
-    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool hitSnooze, bool showered, bool ateBreakfast, bool driving, bool atWork)
+    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool hitSnooze, bool showered, bool ateBreakfast, bool driving, bool atWork, bool passedOut, bool panicAttack, bool wentToLunch)
     {
-        bool[] boolArray = { atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork };
+        bool[] boolArray = { atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch };
         return boolArray;
     }
 
@@ -443,8 +446,54 @@ class Program
         }
     }
 
+    //Methods which manage the max values of the gameplay variables:
+    
+    static void CheckForMaxValues(ref int[] statsArray, ref bool[] boolsArray)
+        {
+            if (statsArray[1] >= 100)
+            {         
+                boolsArray[7] = true;
+                PassOut(ref statsArray, ref boolsArray);
+            }    
+            else if (statsArray[2] >= 100)
+            {
+                boolsArray[8] = true;
+                PanicAttack(ref statsArray, ref boolsArray);
+            } 
+            else if (statsArray[4] >= 10000)
+            {
+                Console.WriteLine("You've suffered a caffeine overdose! You are dead!");
+            }
+        
+        }
+
+    static void PassOut(ref int[] statsArray, ref bool[] boolsArray)
+        {
+            do
+            {
+                Console.WriteLine("You've become so tired that you've passed out!");
+                PassTenMinutes(ref statsArray);
+            } while (statsArray[1] >= 100);
+            Console.WriteLine("At last, you wake up from your involuntary nap. Back to working on tasks.");
+            boolsArray[7] = false;
+        }
+
+    static void PanicAttack(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        do
+        {
+            Console.WriteLine("Your anxiety has spiraled out of control into a panic attack!");
+            PassTenMinutes(ref statsArray);
+        } while (statsArray[2] >= 100);
+        Console.WriteLine("Finally, your panic attack subsides. Better lay off the caffeine for an hour or two.");
+        boolsArray[8] = false;
+    }
+            
+
+    
+
     //Stat Modication Methods:
-    static void PassTenMinutes(ref int[] statsArray) // passes 0.time 1.tiredness 2.anxiety 3.focus 4.caffeine
+    static void PassTenMinutes(ref int[] statsArray) 
     {
         statsArray[0]++; //Increments time
         statsArray[2] = (int)(statsArray[2] * Math.Pow(0.5, 0.083)); // Anxiety half-life of 2 hour decay
@@ -690,16 +739,12 @@ class Program
                 Console.WriteLine("When you look back on your work, it's an incomprehensible mess!");
                 break;
         }
+        tasksComplete += successfulTasksThisChunk;
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
-
-
-
-
 }
-
 
 
 
