@@ -50,6 +50,7 @@ class Program
             PrintStatsArray(statsArray); // For debug only
             Array.Clear(optionsOut);
         } while (time <= 60);
+        EndGame(statsArray, boolArray, tasksComplete);
             
 
 
@@ -923,6 +924,13 @@ class Program
         DirectlyChangeAnxiety(-20, ref statsArray);
         DirectlyChangeFocus(20, ref statsArray);
         boolsArray[9] = true;
+    }
+
+    static void EndGame(int[] statsArray, bool[] boolsArray, int tasksComplete)
+    {
+        Console.WriteLine($"The time is now {ParseTime(statsArray[0])}. You made it!");
+        Console.WriteLine($"You completed {tasksComplete} tasks at work today! I'm sure wherever they are, your parents are proud.");
+        Console.WriteLine("Time to head home and get ready to start this all over again tomorrow.");
     }
 
 }
