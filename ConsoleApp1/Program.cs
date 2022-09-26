@@ -25,13 +25,15 @@ class Program
         bool wentToLunch = false;
         bool passedOut = false;
         bool panicAttack = false;
+        bool tookFirstBreak = false;
+        bool tookSecondBreak = false;
         int choiceOut;
         object[,] optionsOut;
         tiredness = StartTiredLevel();
         anxiety = StartAnxietyLevel();
         focus = StartFocusLevel();
         int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
-        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch);
+        bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch, tookFirstBreak, tookSecondBreak);
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
         Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
@@ -62,13 +64,13 @@ class Program
         return statsArray;
     }
 
-    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool hitSnooze, bool showered, bool ateBreakfast, bool driving, bool atWork, bool passedOut, bool panicAttack, bool wentToLunch)
+    static bool[] MakeBoolsIntoArray(bool atHome, bool waitedForAlarm, bool hitSnooze, bool showered, bool ateBreakfast, bool driving, bool atWork, bool passedOut, bool panicAttack, bool wentToLunch, bool tookFirstBreak, bool tookSecondBreak)
     {
-        bool[] boolArray = { atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch };
+        bool[] boolArray = { atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch, tookFirstBreak, tookSecondBreak };
         return boolArray;
     }
 
-    //Debug method for arrays:
+    //Debug method for stats array:
     static void PrintStatsArray(int [] statsArray)
     {
         Console.WriteLine($"Time: {statsArray[0]} *** Tiredness: {statsArray[1]} *** Anxiety: {statsArray[2]} *** Focus: {statsArray[3]} *** Caffeine: {statsArray[4]}");
@@ -90,7 +92,7 @@ class Program
         options.Add((string)optionsBuilder[optionCounter, 0]);
         optionCounter++;
 
-        if (boolsArray[0] == true)
+        if (boolsArray[0] == true) //At home
         {
             if (statsArray[0] == 0)
             {
@@ -146,7 +148,7 @@ class Program
             optionCounter++;
         }
 
-        if (boolsArray[5] == true)
+        if (boolsArray[5] == true) //Driving
         {
             optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drive straight to work. ";
             optionsBuilder[optionCounter, 1] = 11;
@@ -164,12 +166,72 @@ class Program
             optionCounter++;
         }
 
-        if (boolsArray[6] == true)
+        if (boolsArray[6] == true) // At Work
         {
             optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Work on job tasks. ";
             optionsBuilder[optionCounter, 1] = 14;
             options.Add((string)optionsBuilder[optionCounter, 0]);
             optionCounter++;
+
+            if (statsArray[0] < 21) //11:30am
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drink from the office decaf pot. ";
+                optionsBuilder[optionCounter, 1] = 15;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+
+            if (statsArray[0] < 36) //2:00pm
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Drink some of the weak office coffee. ";
+                optionsBuilder[optionCounter, 1] = 16;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+
+            optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Buy a soda from the vending machine. ";
+            optionsBuilder[optionCounter, 1] = 17;
+            options.Add((string)optionsBuilder[optionCounter, 0]);
+            optionCounter++;
+
+            if (boolsArray[10] == false) //Took first first
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take a ten minute break. ";
+                optionsBuilder[optionCounter, 1] = 18;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+
+            if (boolsArray[10] == true & boolsArray[11] == false) //Took first but not second
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take another ten minute break. ";
+                optionsBuilder[optionCounter, 1] = 19;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
+
+            if (boolsArray[9] == false & statsArray[0] >= 24 & statsArray[0] < 36) //Haven't taken lunch and is between noon and 1:50pm
+            {
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take lunch and get a coffee. ";
+                optionsBuilder[optionCounter, 1] = 20;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take lunch with an energy drink. ";
+                optionsBuilder[optionCounter, 1] = 21;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take lunch and get a soda. ";
+                optionsBuilder[optionCounter, 1] = 23;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+
+                optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take lunch with just water. ";
+                optionsBuilder[optionCounter, 1] = 24;
+                options.Add((string)optionsBuilder[optionCounter, 0]);
+                optionCounter++;
+            }
         }
 
         optionsOut = optionsBuilder;
@@ -251,6 +313,33 @@ class Program
                 break;
             case 14:
                 WorkOnTasks(ref statsArray, ref boolsArray, ref tasksComplete);
+                break;
+            case 15:
+                DrinkOfficeDecaf(ref statsArray);
+                break;
+            case 16:
+                DrinkWeakOfficeCoffee(ref statsArray);
+                break;
+            case 17:
+                BuySoda(ref statsArray);
+                break;
+            case 18:
+                TakeFirstBreak(ref statsArray, ref boolsArray);
+                break;
+            case 19:
+                TakeSecondBreak(ref statsArray, ref boolsArray);
+                break;
+            case 20:
+                LunchCoffee(ref statsArray, ref boolsArray);
+                break;
+            case 21:
+                LunchEnergyDrink(ref statsArray, ref boolsArray);
+                break;
+            case 22:
+                LunchSoda(ref statsArray, ref boolsArray);
+                break;
+            case 23:
+                LunchWater(ref statsArray, ref boolsArray);
                 break;
         }
     }
@@ -742,6 +831,98 @@ class Program
         tasksComplete += successfulTasksThisChunk;
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
+    }
+
+    static void DrinkOfficeDecaf(ref int[] statsArray)
+    {
+        Console.WriteLine("You siphon a cup from the office decaf that your nicer coworkers gather around. They've long stopped expecting conversation from you.");
+        DirectlyAddCaffeine(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void DrinkWeakOfficeCoffee(ref int[] statsArray)
+    {
+        Console.WriteLine("The \"coffee enthusiasts\" of the office provide you with the weakest cup you'll have all week.");
+        DirectlyAddCaffeine(10, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void BuySoda(ref int[] statsArray)
+    {
+        Console.WriteLine("You've learned to check the expiration date of anything that comes out of the vending machine. This one is within the margin of error.");
+        DirectlyAddCaffeine(40, ref statsArray);
+        PassTenMinutes(ref statsArray);
+    }
+
+    static void TakeFirstBreak (ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You are legally entitled to take paid breaks during your workday. No one ever told you that, but no one ever questions it either.");
+        DirectlyChangeAnxiety(-10, ref statsArray);
+        boolsArray[10] = true;
+    }
+
+    static void TakeSecondBreak(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You are legally entitled to take paid breaks during your workday. No one ever told you that, but no one ever questions it either.");
+        DirectlyChangeAnxiety(-10, ref statsArray);
+        boolsArray[11] = true;
+    }
+
+    static void LunchCoffee(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You enjoy your lunch, and the boutique coffee you get with it makes it even better.");
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        DirectlyAddCaffeine(100, ref statsArray);
+        DirectlyChangeAnxiety(-10, ref statsArray);
+        DirectlyChangeFocus(20, ref statsArray);
+        boolsArray[9] = true;
+    }
+
+    static void LunchEnergyDrink(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You enjoy your lunch, which pairs oddly well with the taste of energy drink.");
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        DirectlyAddCaffeine(200, ref statsArray);
+        DirectlyChangeAnxiety(-10, ref statsArray);
+        DirectlyChangeFocus(20, ref statsArray);
+        boolsArray[9] = true;
+    }
+    static void LunchSoda(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You enjoy your lunch. The fountain soda is truly the drink of kings.");
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        DirectlyAddCaffeine(40, ref statsArray);
+        DirectlyChangeAnxiety(-10, ref statsArray);
+        DirectlyChangeFocus(20, ref statsArray);
+        boolsArray[9] = true;
+    }
+    static void LunchWater(ref int[] statsArray, ref bool[] boolsArray)
+    {
+        Console.WriteLine("You enjoy your lunch with no caffeine. You're not addicted. Water is good for you.");
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        PassTenMinutes(ref statsArray);
+        DirectlyChangeAnxiety(-20, ref statsArray);
+        DirectlyChangeFocus(20, ref statsArray);
+        boolsArray[9] = true;
     }
 
 }
