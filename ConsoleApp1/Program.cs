@@ -34,8 +34,9 @@ class Program
         focus = StartFocusLevel();
         int[] statsArray = MakeStatsIntoArray(time, tiredness, anxiety, focus, caffeine);
         bool[] boolArray = MakeBoolsIntoArray(atHome, waitedForAlarm, hitSnooze, showered, ateBreakfast, driving, atWork, passedOut, panicAttack, wentToLunch, tookFirstBreak, tookSecondBreak);
+        Console.Clear();
         Console.WriteLine("Your fitful night of poor sleep must come to an end. Your front door slams in the distance...");
-        Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, time for you to get your day started.");
+        Console.WriteLine($"That was your roommate leaving for work, meaning it's {ParseTime(time)}, almost time for you to get your day started.");
         Console.WriteLine("Your alarm goes off in ten minutes.");
         Console.WriteLine("You need to head out the door by 7:40am to make it to work on time at 8:00am.");
         Console.WriteLine(" ");
@@ -47,6 +48,7 @@ class Program
             BuildOptionsList(ref statsArray, ref boolArray, out optionsOut, out choiceOut);
             Console.Clear();
             ParseChoice(choiceOut, ref optionsOut, ref statsArray, ref boolArray, ref tasksComplete);
+            Console.WriteLine("");
             PrintStatsArray(statsArray); // For debug only
             Array.Clear(optionsOut);
         } while (time <= 60);
@@ -102,7 +104,7 @@ class Program
                 options.Add((string)optionsBuilder[optionCounter, 0]);
                 optionCounter++;
             }
-            if (boolsArray[1] == true && boolsArray[2] == false)
+            if (boolsArray[1] == true & boolsArray[2] == false & boolsArray[3] == false & boolsArray[4] == false)
             {
                 optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Hit the snooze button";
                 optionsBuilder[optionCounter, 1] = 3;
@@ -368,7 +370,9 @@ class Program
     static void StateTheStats(int[] statsArray)
     {
         Console.WriteLine("Here are your impressions of about your present state:");
-        Console.WriteLine($"{ParseTiredness(statsArray[1])} {ParseFocus(statsArray[3])} {ParseAnxiety(statsArray[2])}");
+        Console.WriteLine(ParseTiredness(statsArray[1]));
+        Console.WriteLine(ParseFocus(statsArray[3]));
+        Console.WriteLine(ParseAnxiety(statsArray[2]));
     }
     static string ParseTiredness(int tiredness)
     {
