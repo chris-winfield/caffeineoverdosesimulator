@@ -51,7 +51,7 @@ class Program
             Console.WriteLine("");
             PrintStatsArray(statsArray); // For debug only
             Array.Clear(optionsOut);
-        } while (time <= 60);
+        } while (time < 60);
         EndGame(statsArray, boolArray, tasksComplete);
             
 
@@ -213,7 +213,7 @@ class Program
                 optionCounter++;
             }
 
-            if (boolsArray[9] == false & statsArray[0] >= 24 & statsArray[0] < 36) //Haven't taken lunch and is between noon and 1:50pm
+            if (boolsArray[9] == false & statsArray[0] >= 30 & statsArray[0] < 36) //Haven't taken lunch and is between noon and 1:50pm
             {
                 optionsBuilder[optionCounter, 0] = $"{optionCounter + 1}. Take lunch and get a coffee. ";
                 optionsBuilder[optionCounter, 1] = 20;
@@ -599,11 +599,11 @@ class Program
             int focusCoinFlip = rnd.Next(1, 2); //A 50-50 chance to gain or lose focus on a new hour.
             if (focusCoinFlip % 2 == 0)
             {
-                statsArray[3] = statsArray[3] + 10;
+                statsArray[3] = statsArray[3] + 5;
             }
             else
             {
-                statsArray[3] = statsArray[3] - 10;
+                statsArray[3] = statsArray[3] - 5;
             }       
         }
     }
@@ -611,9 +611,9 @@ class Program
     {
         int addedAnxiety = newCaffeineDose / 10;
         statsArray[2] = statsArray[2] + addedAnxiety;
-        int removedTiredness = newCaffeineDose / 50;
+        int removedTiredness = newCaffeineDose / 20;
         statsArray[1] = statsArray[1] - removedTiredness;
-        int addedFocus = newCaffeineDose / 40;
+        int addedFocus = newCaffeineDose / 10;
         statsArray[3] = statsArray[3] + addedFocus;
         DirectlyAddCaffeine(newCaffeineDose, ref statsArray);
     }
@@ -841,21 +841,21 @@ class Program
     static void DrinkOfficeDecaf(ref int[] statsArray)
     {
         Console.WriteLine("You siphon a cup from the office decaf that your nicer coworkers gather around. They've long stopped expecting conversation from you.");
-        DirectlyAddCaffeine(10, ref statsArray);
+        CalculateCaffeineEffects(20, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
     static void DrinkWeakOfficeCoffee(ref int[] statsArray)
     {
         Console.WriteLine("The \"coffee enthusiasts\" of the office provide you with the weakest cup you'll have all week.");
-        DirectlyAddCaffeine(10, ref statsArray);
+        CalculateCaffeineEffects(60, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
     static void BuySoda(ref int[] statsArray)
     {
         Console.WriteLine("You've learned to check the expiration date of anything that comes out of the vending machine. This one is within the margin of error.");
-        DirectlyAddCaffeine(40, ref statsArray);
+        CalculateCaffeineEffects(40, ref statsArray);
         PassTenMinutes(ref statsArray);
     }
 
@@ -882,7 +882,7 @@ class Program
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
-        DirectlyAddCaffeine(100, ref statsArray);
+        CalculateCaffeineEffects(100, ref statsArray);
         DirectlyChangeAnxiety(-10, ref statsArray);
         DirectlyChangeFocus(20, ref statsArray);
         boolsArray[9] = true;
@@ -897,7 +897,7 @@ class Program
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
-        DirectlyAddCaffeine(200, ref statsArray);
+        CalculateCaffeineEffects(200, ref statsArray);
         DirectlyChangeAnxiety(-10, ref statsArray);
         DirectlyChangeFocus(20, ref statsArray);
         boolsArray[9] = true;
@@ -911,7 +911,7 @@ class Program
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
         PassTenMinutes(ref statsArray);
-        DirectlyAddCaffeine(40, ref statsArray);
+        CalculateCaffeineEffects(40, ref statsArray);
         DirectlyChangeAnxiety(-10, ref statsArray);
         DirectlyChangeFocus(20, ref statsArray);
         boolsArray[9] = true;
